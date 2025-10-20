@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 type Response struct {
@@ -12,10 +13,29 @@ type Response struct {
 }
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
+	// Разрешаем только POST
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Парсим тело формы
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Bad request", http.StatusBadRequest)
+		return
+	}
+
+	// Собираем все параметры в текст
+	var params []string
+	for k, v := range r.Form {
+		params = append(params, fmt.Sprintf("%s=%s", k, strings.Join(v, ",")))
+	}
+
 	resp := Response{
 		ResponseType: "ephemeral",
-		Text:         "👋 Hello from Mattermost slash command! @qwerty",
+		Text:         fmt.Sprintf("👋 Hello from Mattermost slash command!\nReceived params:\n%s", strings.Join(params, "\n")),
 	}
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(resp)
 }
@@ -23,5 +43,5 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	http.HandleFunc("/hello", helloHandler)
 	fmt.Println("Listening on :8083")
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":8083", nil)
 }
