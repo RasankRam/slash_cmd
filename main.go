@@ -32,7 +32,7 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resp := Response{
-		ResponseType: "ephemeral",
+		ResponseType: "in_channel",
 		Text:         fmt.Sprintf("👋 Hello from Mattermost slash command! @qwerty \nReceived params:\n%s", strings.Join(params, "\n")),
 	}
 
