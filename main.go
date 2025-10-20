@@ -33,7 +33,7 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 
 	resp := Response{
 		ResponseType: "ephemeral",
-		Text:         fmt.Sprintf("👋 Hello from Mattermost slash command!\nReceived params:\n%s", strings.Join(params, "\n")),
+		Text:         fmt.Sprintf("👋 Hello from Mattermost slash command! @qwerty \nReceived params:\n%s", strings.Join(params, "\n")),
 	}
 
 	w.Header().Set("Content-Type", "application/json")
